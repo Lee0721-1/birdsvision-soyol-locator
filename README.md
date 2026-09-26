@@ -10,6 +10,7 @@ SOYOL 是 BirdsVision 的独立鸟体定位项目。名称取自 Student YOLO。
 - `soyol/`：A 层审计数据导出、YOLO26n Detect 训练、验证、逐图署名及私密发布包工具。
 - `soyol/ATTRIBUTION_A_DOCUMENTED_20260926.csv`：现有 1,316 张训练图片的逐图署名审阅表；不含图片。
 - [SOYOL_MODEL_CARD.md](SOYOL_MODEL_CARD.md)：训练与验证事实、发布限制。
+- [deployment/20260927/](deployment/20260927/README.md)：线上独立定位进程的版本与 Ultralytics 包来源记录。
 
 源码采用 [AGPL-3.0-only](LICENSE)。图片各有自己的许可；本仓库的源码许可证不改变图片许可。当前仓库仍为 **Private**，未公开模型权重。平台条款询问仍待 iNaturalist 人工答复。独立 `final_test` 尚未完成，不把 validation 当作独立验收。
 

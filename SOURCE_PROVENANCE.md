@@ -6,6 +6,7 @@ This directory was assembled on 2026-09-27 from two **private** BirdsVision work
 | --- | --- | --- |
 | `soyol/`, `tests/soyol/`, `SOYOL_MODEL_CARD.md`, attribution table, `LICENSE`, and third-party notices | `birdsvision-model-training` | `74b8abb55a5742af5aae694f41c988bea292aa79` |
 | `birdsvision_locator/` | `birdsvision-inference-server` | `fb789d316a17ef52a3039302fcbcb3903625f864` |
+| `deployment/20260927/vendor_provenance.json`, `deployment/20260927/verify_vendor_record.py` | `birdsvision-inference-server` | `fb789d316a17ef52a3039302fcbcb3903625f864` |
 
 The copied `birdsvision_locator/app.py` also matches the deployed locator file recorded at `birdsvision-inference-server/deployment/20260927/server/birdsvision_locator/app.py` in that private revision. That source snapshot is evidence about the locator process only; the API and classifier files in the same historical snapshot are outside this project.
 
