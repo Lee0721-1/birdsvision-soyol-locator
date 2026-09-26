@@ -11,7 +11,7 @@ SOYOL 是 BirdsVision 的独立鸟体定位项目。名称取自 Student YOLO。
 - `soyol/ATTRIBUTION_A_DOCUMENTED_20260926.csv`：现有 1,316 张训练图片的逐图署名审阅表；不含图片。
 - [SOYOL_MODEL_CARD.md](SOYOL_MODEL_CARD.md)：训练与验证事实、发布限制。
 
-源码采用 [AGPL-3.0-only](LICENSE)。图片各有自己的许可；本仓库的源码许可证不改变图片许可。当前仅为**本地私密整理版**，未上传 GitHub、未公开模型权重。平台条款询问仍待 iNaturalist 人工答复。独立 `final_test` 尚未完成，不把 validation 当作独立验收。
+源码采用 [AGPL-3.0-only](LICENSE)。图片各有自己的许可；本仓库的源码许可证不改变图片许可。当前仓库仍为 **Private**，未公开模型权重。平台条款询问仍待 iNaturalist 人工答复。独立 `final_test` 尚未完成，不把 validation 当作独立验收。
 
 ## 独立安装与运行
 
@@ -23,7 +23,29 @@ export BIRDSVISION_SOYOL_MODEL_PATH=/private/path/best.pt
 uvicorn birdsvision_locator.app:app --host 127.0.0.1 --port 8001
 ```
 
-`GET /health` 可检查模型是否加载。定位接口只供受控的本机调用，不应将 8001 端口直接暴露到公网。训练工具的依赖见 `requirements-training.txt`；训练命令和数据合同见源码及模型卡。训练图片、选择清单、运行目录、正式权重和 TYLO 均须保存在仓库外。
+`GET /health` 可检查模型是否加载。定位接口只供受控的本机调用，不应将 8001 端口直接暴露到公网。训练工具的依赖见 `requirements-training.txt`。训练图片、选择清单、运行目录、正式权重和 TYLO 均须保存在仓库外。
+
+## 训练与验证入口
+
+以下命令中的私有路径需要使用者用自己有权使用的数据合同、人工确认框及权重填写：
+
+```bash
+python -m soyol.soyol_prepare_documented \
+  --selection /private/old-selection/selection.jsonl \
+  --attribution-dir /private/attribution-overlay \
+  --metadata-dir /private/photo-metadata-audit \
+  --output /private/documented-selection
+python -m soyol.soyol_export --selection /private/documented-selection/selection.jsonl \
+  --output /private/soyol-data
+python -m soyol.soyol_train --dataset /private/soyol-data --base /private/yolo26n.pt \
+  --project /private/runs --name example-run --epochs 20 --imgsz 640 --batch 8
+python -m soyol.soyol_validate --dataset /private/soyol-data \
+  --best /private/runs/example-run/weights/best.pt \
+  --last /private/runs/example-run/weights/last.pt \
+  --output /private/reports/soyol-validation.json
+```
+
+训练入口验证外部数据合同，只接受脚本记录的 YOLO26n Detect 基础权重，不使用 TYLO 权重。发布包工具 `python -m soyol.soyol_release_bundle` 会在仓库外组装内部审阅包；具体参数见 `--help`。它不会上传文件或改变仓库可见性。
 
 ## 验证
 

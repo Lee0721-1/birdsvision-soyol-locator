@@ -6,7 +6,7 @@ The locator receives an image and returns its dimensions and bird boxes. It does
 
 `birdsvision_locator/` contains the standalone FastAPI process. `soyol/` contains data export, training, validation, attribution, and private release-bundle tools. `SOYOL_MODEL_CARD.md` records the training evidence and unresolved publication conditions. Source code is [AGPL-3.0-only](LICENSE); training images retain their individual licenses.
 
-This is a local private preparation copy. No weight has been published or uploaded from this directory. The iNaturalist platform inquiry is awaiting a human response, and the independent `final_test` has not been completed.
+This GitHub repository remains private. No weight has been published or uploaded from this directory. The iNaturalist platform inquiry is awaiting a human response, and the independent `final_test` has not been completed.
 
 Run the locator in its own Python environment:
 

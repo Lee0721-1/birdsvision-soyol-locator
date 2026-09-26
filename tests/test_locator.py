@@ -49,8 +49,14 @@ def test_locator_returns_boxes_without_classifier(monkeypatch):
             return [[2.0, 3.0, 30.0, 18.0]]
 
     predictions = [SimpleNamespace(boxes=SimpleNamespace(xyxy=FakeCoordinates()))]
+    calls = []
+
+    def predict(**kwargs):
+        calls.append(kwargs)
+        return predictions
+
     fake = SimpleNamespace(model=SimpleNamespace(end2end=False),
-                           predict=lambda **kwargs: predictions)
+                           predict=predict)
     monkeypatch.setattr(locator_app, "init_model", lambda: None)
     monkeypatch.setattr(locator_app, "_model", fake)
 
@@ -60,3 +66,15 @@ def test_locator_returns_boxes_without_classifier(monkeypatch):
     assert response.status_code == 200
     assert response.json() == {"width": 40, "height": 20,
                                "boxes": [[2.0, 3.0, 30.0, 18.0]]}
+    assert {key: calls[0][key] for key in ("imgsz", "conf", "iou", "max_det")} == {
+        "imgsz": 640, "conf": 0.25, "iou": 0.7, "max_det": 10,
+    }
+
+
+def test_locator_rejects_invalid_upload(monkeypatch):
+    monkeypatch.setattr(locator_app, "init_model", lambda: None)
+    monkeypatch.setattr(locator_app, "_model", object())
+    with TestClient(locator_app.app) as client:
+        response = client.post("/v1/locate", content=b"not an image",
+                               headers={"content-type": "application/octet-stream"})
+    assert response.status_code == 400
