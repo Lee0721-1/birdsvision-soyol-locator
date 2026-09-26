@@ -9,10 +9,10 @@ SOYOL 是 BirdsVision 的独立鸟体定位项目。名称取自 Student YOLO。
 - `birdsvision_locator/`：独立 FastAPI 进程，`POST /v1/locate` 接收 `application/octet-stream` 图片，返回 `width`、`height`、`boxes`。
 - `soyol/`：A 层审计数据导出、YOLO26n Detect 训练、验证、逐图署名及私密发布包工具。
 - `soyol/ATTRIBUTION_A_DOCUMENTED_20260926.csv`：现有 1,316 张训练图片的逐图署名审阅表；不含图片。
-- [SOYOL_MODEL_CARD.md](SOYOL_MODEL_CARD.md)：训练与验证事实、发布限制。
+- [SOYOL_MODEL_CARD.md](SOYOL_MODEL_CARD.md)：训练与验证事实、发布限制。`soyol/ATTRIBUTION_TRAINING_20260926.csv` 保留训练记录绑定的署名表，`soyol/ATTRIBUTION_A_DOCUMENTED_20260926.csv` 是最新发布用署名表。
 - [deployment/20260927/](deployment/20260927/README.md)：线上独立定位进程的版本与 Ultralytics 包来源记录。
 
-源码采用 [AGPL-3.0-only](LICENSE)。图片各有自己的许可；本仓库的源码许可证不改变图片许可。当前仓库仍为 **Private**，未公开模型权重。平台条款询问仍待 iNaturalist 人工答复。独立 `final_test` 尚未完成，不把 validation 当作独立验收。
+源码采用 [AGPL-3.0-only](LICENSE)。计划发布的 SOYOL `best.pt` 权重也采用 AGPL-3.0-only；图片各有自己的许可，源码和权重许可证不改变图片许可。本仓库目前尚未对公众开放，SOYOL 权重也尚未发布。计划公开本仓库的定位器源码与 SOYOL 权重，以及独立的[分类服务源码](https://github.com/Lee0721-1/birdsvision-inference-server)和[分类器训练源码](https://github.com/Lee0721-1/birdsvision-model-training)；分类器权重、正式类表、训练图片和 TYLO 不随这些仓库发布。平台条款询问仍待 iNaturalist 人工答复。独立 `final_test` 尚未完成，不把 validation 当作独立验收。
 
 ## 独立安装与运行
 
@@ -46,7 +46,7 @@ python -m soyol.soyol_validate --dataset /private/soyol-data \
   --output /private/reports/soyol-validation.json
 ```
 
-训练入口验证外部数据合同，只接受脚本记录的 YOLO26n Detect 基础权重，不使用 TYLO 权重。发布包工具 `python -m soyol.soyol_release_bundle` 会在仓库外组装内部审阅包；具体参数见 `--help`。它不会上传文件或改变仓库可见性。
+训练入口验证外部数据合同，只接受脚本记录的 YOLO26n Detect 基础权重，不使用 TYLO 权重。发布包工具 `python -m soyol.soyol_release_bundle` 会在仓库外组装内部审阅包，并用 `--recheck` 指定的逐图元数据复核记录再次核对发布用署名；具体参数见 `--help`。它不会上传文件或改变仓库可见性。
 
 ## 验证
 
