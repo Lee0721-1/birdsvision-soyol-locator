@@ -63,6 +63,7 @@ def test_private_bundle_binds_inputs_and_removes_local_paths(tmp_path, monkeypat
     output = tmp_path / "bundle"
     manifest = release.build_bundle(*evidence(tmp_path), output)
     assert release.verify_bundle(output) == manifest
+    assert manifest["source_repository"] == "https://github.com/Lee0721-1/birdsvision-soyol-locator"
     assert manifest["attribution_rows"] == 1
     assert manifest["final_test_completed"] is False
     assert "weight_path" not in (output / "VALIDATION.json").read_text(encoding="utf-8")

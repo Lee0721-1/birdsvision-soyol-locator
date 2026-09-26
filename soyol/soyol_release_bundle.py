@@ -16,6 +16,7 @@ from pathlib import Path
 
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
+SOURCE_REPOSITORY_URL = "https://github.com/Lee0721-1/birdsvision-soyol-locator"
 COPIED_REPO_FILES = {
     "MODEL_CARD.md": "SOYOL_MODEL_CARD.md",
     "LICENSE": "LICENSE",
@@ -149,7 +150,7 @@ def build_bundle(record_path: Path, weight_path: Path, attribution_path: Path,
         manifest = {
             "format": "birdsvision-soyol-private-release-bundle-v1",
             "status": "private_staging_not_publication_clearance",
-            "source_repository": "https://github.com/Lee0721-1/birdsvision-model-training",
+            "source_repository": SOURCE_REPOSITORY_URL,
             "source_commit": source_commit,
             "training_selection_sha256": record["selection_sha256"],
             "training_contract_sha256": record["training_contract_sha256"],
