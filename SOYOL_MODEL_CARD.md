@@ -1,6 +1,6 @@
-# SOYOL v1 model card — preparation record
+# SOYOL v1 model card
 
-**Publication status:** Source preparation only. No SOYOL weights, images, labels, or final-test result are included in this repository.
+The repository contains the locator source and attribution table. The SOYOL `best.pt` weight is distributed as a separate GitHub Release asset. Training images, classifier weights and labels, and an independent final-test result are not included.
 
 ## Documented-source retraining completed on 2026-09-26
 
@@ -10,7 +10,7 @@ The new run completed 20 epochs on the official YOLO26n Detect initialization, w
 
 The retained photos have recorded photo-level CC BY or CC0 codes and current attribution text. Their license URLs are derived from iNaturalist's current code-to-URL mapping, rather than captured historical URLs for each photo. iNaturalist has not yet given a human response to the platform-terms inquiry. Preparation of this dataset does not clear the planned AGPL-3.0 weight publication.
 
-On 2026-09-27, a fresh public API check found all 1,316 retained photos with the same photo-level license codes. The five excluded observations were still not returned. One retained photo, `inaturalist:693812782`, had an updated attribution string: `(c) Kesava Garimella, some rights reserved (CC BY)`. `soyol/ATTRIBUTION_TRAINING_20260926.csv` preserves the table bound to the training record; `soyol/ATTRIBUTION_A_DOCUMENTED_20260926.csv` is the updated publication table. The private bundle checks both against the fresh metadata record and lists the change. This metadata check does not verify legal ownership or historical license URLs.
+On 2026-09-27, a fresh public API check found all 1,316 retained photos with the same photo-level license codes. The five excluded observations were still not returned. One retained photo, `inaturalist:693812782`, had an updated attribution string: `(c) Kesava Garimella, some rights reserved (CC BY)`. `soyol/ATTRIBUTION_TRAINING_20260926.csv` preserves the table bound to the training record; `soyol/ATTRIBUTION_A_DOCUMENTED_20260926.csv` is the updated publication table. The release bundle checks both against the fresh metadata record and lists the change. This metadata check does not verify legal ownership or historical license URLs.
 
 ## Model and intended output
 
@@ -23,7 +23,7 @@ SOYOL v1 is a single-class YOLO26n Detect bird locator. It returns zero to ten p
 - Run: Ultralytics 8.4.126, 20 complete epochs, image size 640, batch 8. The saved best checkpoint came from epoch 18.
 - Validation: for the selected checkpoint on the one-to-many NMS branch, mAP50 was 0.816 and mAP50-95 was 0.515. Inference uses `conf=0.25`, `iou=0.7`, and `max_det=10`. The ten-box limit never truncates ground-truth labels.
 
-These numbers come from the internal training and validation records. The independent SOYOL `final_test` has not been run or accepted. An A-tier image quality review is also recorded as `not_started`. Do not present this preparation record as a completed model release or a guarantee of detection quality.
+These numbers come from the internal training and validation records. The independent SOYOL `final_test` has not been run or accepted. An A-tier image quality review is also recorded as `not_started`. The release does not claim independent acceptance or guarantee detection quality.
 
 ## Attribution and publication boundary
 
@@ -33,6 +33,6 @@ Of the older A-tier records, 1,321 were obtained from iNaturalist and 174 from a
 
 The Hugging Face dataset card marks the dataset CC0-1.0 but says it was sourced from a Kaggle dataset. All 174 selected records currently use the same dataset-level attribution string; the recorded evidence does not identify the original photographer or an image-specific rights grant. These images therefore need upstream, image-level rights verification before the current weights can be described as cleared for public commercial reuse. The attribution exporter marks both source groups as requiring review; its CSV is not a publication approval.
 
-The planned SOYOL code and `best.pt` weight release follows the Ultralytics AGPL-3.0 route, with both offered under AGPL-3.0-only when published. SOYOL localization and ConvNeXt classification are separate projects. The classifier API and training source are planned for publication in their own repositories; the classifier class table, production weights, and internal TYLO teacher model are not part of this SOYOL release. On 2026-09-27 the production service switched to a separate SOYOL locator process that communicates with the classifier API over loopback HTTP. The deployed locator's exact corresponding source and weight still need to be bound to a public release. This technical and release boundary is the project's architecture decision; it does not by itself settle the scope of the corresponding source. See [Ultralytics licensing guidance](https://www.ultralytics.com/license) and the [GNU FAQ on separate programs](https://www.gnu.org/licenses/gpl-faq.en.html#MereAggregation).
+SOYOL code and the `best.pt` weight follow the Ultralytics AGPL-3.0 route, with both offered under AGPL-3.0-only. SOYOL localization and ConvNeXt classification are separate projects. The classifier API and training source are available in their own repositories; the classifier class table, production weights, and internal TYLO teacher model are not part of this SOYOL release. On 2026-09-27 the production service switched to a separate SOYOL locator process that communicates with the classifier API over loopback HTTP. This technical and release boundary is the project's architecture decision; it does not by itself settle the scope of the corresponding source. See [Ultralytics licensing guidance](https://www.ultralytics.com/license) and the [GNU FAQ on separate programs](https://www.gnu.org/licenses/gpl-faq.en.html#MereAggregation).
 
-Before a weight release, assemble the SOYOL weight, corresponding source, third-party notices, attribution table, and a fixed release manifest. If independent `final_test` is omitted, the release must say so rather than presenting validation as independent acceptance.
+The weight release includes the corresponding source revision, third-party notices, attribution table, and a fixed release manifest. It states explicitly that independent `final_test` was omitted and reports the retained validation metrics only.

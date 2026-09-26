@@ -1,6 +1,6 @@
 # SPDX-FileCopyrightText: 2026 lee0G21
 # SPDX-License-Identifier: AGPL-3.0-only
-"""Build a private SOYOL release staging bundle from verified local evidence."""
+"""Build a SOYOL release bundle from verified local evidence."""
 
 from __future__ import annotations
 
@@ -165,7 +165,8 @@ def validate_inputs(record_path: Path, weight_path: Path, attribution_path: Path
 
 
 def build_bundle(record_path: Path, weight_path: Path, attribution_path: Path,
-                 validation_path: Path, recheck_path: Path, output: Path) -> dict:
+                 validation_path: Path, recheck_path: Path, output: Path,
+                 distribution: bool = False) -> dict:
     record, validation, attribution_count, recheck = validate_inputs(
         record_path, weight_path, attribution_path, validation_path, recheck_path
     )
@@ -198,25 +199,39 @@ def build_bundle(record_path: Path, weight_path: Path, attribution_path: Path,
             json.dumps(recheck, ensure_ascii=False, indent=2) + "\n",
             encoding="utf-8",
         )
-        (bundle / "README.md").write_text(
-            "# SOYOL 私密预发布包\n\n"
-            "此包用于核对发布材料，尚未获准公开或上传。"
+        shared_readme = (
             "其中不包含原图、裁剪图、分类器权重或私有数据清单。\n\n"
             "`best.pt` 是可考证 A 层训练权重；逐图署名见 `ATTRIBUTION.csv`。"
             "训练时署名与本次发布署名的差异见 `ATTRIBUTION_RECHECK.json`。"
             "验证结果见 `VALIDATION.json`，没有独立 final_test。"
-            "计划公开时，`best.pt` 与对应源码均按 AGPL-3.0-only 发布。"
-            "此许可不重新许可第三方训练图片；平台条款询问仍未收到人工答复。\n\n"
+            "第三方训练图片保留各自许可，AGPL-3.0-only 不重新许可这些图片。"
+            "iNaturalist 平台条款询问仍未收到人工答复。\n\n"
             f"当前独立源码提交：{source_commit}\n"
-            f"训练时源码提交：{record['source_repo_commit_at_training']}\n",
-            encoding="utf-8",
+            f"训练时源码提交：{record['source_repo_commit_at_training']}\n"
         )
+        if distribution:
+            readme = (
+                "# SOYOL v1 公开分发包\n\n"
+                "`best.pt` 与对应 SOYOL 源码按 AGPL-3.0-only 提供。"
+                "此包已核对文件完整性，但打包本身不代表 GitHub 发布成功。"
+                + shared_readme
+            )
+        else:
+            readme = (
+                "# SOYOL 私密预发布包\n\n"
+                "此包用于核对发布材料，尚未获准公开或上传。"
+                "计划公开时，`best.pt` 与对应源码按 AGPL-3.0-only 提供。"
+                + shared_readme
+            )
+        (bundle / "README.md").write_text(readme, encoding="utf-8")
         filenames = ("best.pt", "ATTRIBUTION.csv", "ATTRIBUTION_RECHECK.json", "MODEL_CARD.md",
                      "SOURCE_PROVENANCE.md", "LICENSE",
                      "THIRD_PARTY_NOTICES.md", "VALIDATION.json", "README.md")
         manifest = {
-            "format": "birdsvision-soyol-private-release-bundle-v1",
-            "status": "private_staging_not_publication_clearance",
+            "format": ("birdsvision-soyol-distribution-bundle-v1" if distribution
+                       else "birdsvision-soyol-private-release-bundle-v1"),
+            "status": ("prepared_for_public_distribution" if distribution
+                       else "private_staging_not_publication_clearance"),
             "source_repository": SOURCE_REPOSITORY_URL,
             "source_commit": source_commit,
             "training_source_repository": TRAINING_SOURCE_REPOSITORY_URL,
@@ -241,8 +256,18 @@ def build_bundle(record_path: Path, weight_path: Path, attribution_path: Path,
 
 def verify_bundle(directory: Path) -> dict:
     manifest = read_json(directory / "RELEASE_MANIFEST.json")
-    if manifest["format"] != "birdsvision-soyol-private-release-bundle-v1":
+    if manifest["format"] not in {
+            "birdsvision-soyol-private-release-bundle-v1",
+            "birdsvision-soyol-distribution-bundle-v1"}:
         raise ValueError("invalid release manifest format")
+    expected_status = {
+        "birdsvision-soyol-private-release-bundle-v1":
+            "private_staging_not_publication_clearance",
+        "birdsvision-soyol-distribution-bundle-v1":
+            "prepared_for_public_distribution",
+    }[manifest["format"]]
+    if manifest["status"] != expected_status:
+        raise ValueError("invalid release manifest status")
     expected_files = set(manifest["files"]) | {"RELEASE_MANIFEST.json"}
     actual_files = {path.name for path in directory.iterdir() if path.is_file()}
     if actual_files != expected_files or any(path.is_dir() for path in directory.iterdir()):
@@ -261,9 +286,12 @@ if __name__ == "__main__":
     parser.add_argument("--validation", type=Path, required=True)
     parser.add_argument("--recheck", type=Path, required=True)
     parser.add_argument("--output", type=Path, required=True)
+    parser.add_argument("--distribution", action="store_true",
+                        help="prepare the checked files for a public GitHub release")
     args = parser.parse_args()
     result = build_bundle(args.record, args.weight, args.attribution,
-                          args.validation, args.recheck, args.output)
+                          args.validation, args.recheck, args.output,
+                          distribution=args.distribution)
     verify_bundle(args.output)
     print(json.dumps({"status": result["status"], "files": list(result["files"]),
                       "attribution_rows": result["attribution_rows"]},

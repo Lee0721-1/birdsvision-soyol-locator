@@ -4,11 +4,11 @@ SOYOL means Student YOLO. It is an independent BirdsVision bird-localization pro
 
 The locator receives an image and returns its dimensions and bird boxes. It does not identify species. A separate classifier can call its loopback HTTP API. The locator does not load classifier code, labels, or weights. See the [BirdsVision website](https://www.birdsvision.com.cn/) for the app.
 
-`birdsvision_locator/` contains the standalone FastAPI process. `soyol/` contains data export, training, validation, attribution, and private release-bundle tools. `SOYOL_MODEL_CARD.md` records the training evidence and unresolved publication conditions. Source code and the planned SOYOL `best.pt` weight release are AGPL-3.0-only; training images retain their individual licenses.
+`birdsvision_locator/` contains the standalone FastAPI process. `soyol/` contains data export, training, validation, attribution, and release-bundle tools. `SOYOL_MODEL_CARD.md` records the training evidence and unresolved platform inquiry. Source code and the SOYOL `best.pt` weight are AGPL-3.0-only; the weight is distributed as a separate GitHub Release asset. Training images retain their individual licenses.
 
 `soyol/ATTRIBUTION_TRAINING_20260926.csv` preserves the attribution table bound to the training record. `soyol/ATTRIBUTION_A_DOCUMENTED_20260926.csv` is the updated table intended for publication. The staging bundle verifies it against a fresh per-photo metadata check supplied through `--recheck`.
 
-This repository is not yet publicly accessible, and no SOYOL weight has been published. The planned source release also includes the separate [classifier API](https://github.com/Lee0721-1/birdsvision-inference-server) and [classifier training code](https://github.com/Lee0721-1/birdsvision-model-training). Classifier weights, production labels, training images, and TYLO are excluded. The iNaturalist platform inquiry is awaiting a human response, and the independent `final_test` has not been completed.
+The separate [classifier API](https://github.com/Lee0721-1/birdsvision-inference-server) and [classifier training code](https://github.com/Lee0721-1/birdsvision-model-training) are public. Classifier weights, production labels, training images, and TYLO are excluded. The iNaturalist platform inquiry is awaiting a human response, and the independent `final_test` has not been completed.
 
 Run the locator in its own Python environment:
 

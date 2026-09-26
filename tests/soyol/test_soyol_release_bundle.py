@@ -94,6 +94,25 @@ def test_private_bundle_binds_inputs_and_removes_local_paths(tmp_path, monkeypat
         release.verify_bundle(output)
 
 
+def test_distribution_bundle_keeps_disclosure_and_file_checks(tmp_path, monkeypatch):
+    monkeypatch.setattr(release, "checked_source_commit", lambda: "d" * 40)
+    output = tmp_path / "distribution"
+    manifest = release.build_bundle(*evidence(tmp_path, monkeypatch), output,
+                                    distribution=True)
+    assert manifest["format"] == "birdsvision-soyol-distribution-bundle-v1"
+    assert manifest["status"] == "prepared_for_public_distribution"
+    assert release.verify_bundle(output) == manifest
+    readme = (output / "README.md").read_text(encoding="utf-8")
+    assert "AGPL-3.0-only" in readme
+    assert "没有独立 final_test" in readme
+    assert "尚未获准公开或上传" not in readme
+    manifest["status"] = "published"
+    (output / "RELEASE_MANIFEST.json").write_text(json.dumps(manifest),
+                                                  encoding="utf-8")
+    with pytest.raises(ValueError, match="manifest status"):
+        release.verify_bundle(output)
+
+
 def test_private_bundle_rejects_mismatched_weight(tmp_path, monkeypatch):
     inputs = evidence(tmp_path, monkeypatch)
     inputs[1].write_bytes(b"different")
